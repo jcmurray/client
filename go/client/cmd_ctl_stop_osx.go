@@ -103,7 +103,7 @@ func (s *CmdCtlStop) Run() error {
 		if err != nil {
 			return err
 		}
-		return cli.StopService(context.TODO(), keybase1.StopArg{ExitCode: keybase1.ExitCode_OK})
+		return cli.StopService(context.TODO(), keybase1.StopServiceArg{ExitCode: keybase1.ExitCode_OK})
 	}
 	return ctlStop(s.G(), s.components)
 }
