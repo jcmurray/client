@@ -13,6 +13,8 @@ import (
 	"github.com/keybase/client/go/launchd"
 	"github.com/keybase/client/go/libcmdline"
 	"github.com/keybase/client/go/libkb"
+	"github.com/keybase/client/go/protocol/keybase1"
+	"golang.org/x/net/context"
 )
 
 // NewCmdCtlStop constructs ctl start command
@@ -97,7 +99,7 @@ func ctlStop(g *libkb.GlobalContext, components map[string]bool) error {
 
 func (s *CmdCtlStop) Run() error {
 	if s.shutdown {
-		cli, err := GetCtlClient(g)
+		cli, err := GetCtlClient(s.G())
 		if err != nil {
 			return err
 		}
