@@ -19,7 +19,7 @@ import (
 func NewCmdCtlStop(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Command {
 	return cli.Command{
 		Name:  "stop",
-		Usage: "Stop the app and services",
+		Usage: "Stop Keybase",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:  "include",

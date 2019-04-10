@@ -16,11 +16,11 @@ import (
 func NewCmdCtlStop(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Command {
 	return cli.Command{
 		Name:  "stop",
-		Usage: "Stop the background keybase service",
+		Usage: "Stop Keybase",
 		Flags: []cli.Flag{
 			cli.BoolFlag{
 				Name:  "shutdown",
-				Usage: "Only shutdown the service",
+				Usage: "Only shutdown the background service",
 			},
 		},
 		Action: func(c *cli.Context) {
