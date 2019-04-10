@@ -151,7 +151,7 @@ func (rkt *rekeyTester) cleanup() {
 	for _, od := range rkt.devices {
 		od.tctx.Cleanup()
 		if od.service != nil {
-			od.service.Stop(libkb.NewMetaContextForTest(*od.tctx), 0)
+			CtlStop(od.tctx.G)
 			od.stop()
 		}
 	}
