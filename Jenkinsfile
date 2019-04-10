@@ -545,6 +545,14 @@ def testGo(prefix, packagesToTest) {
         ],
       ],
     ]
+    def getOverallTimeout = { testSpec ->
+      def timeoutMatches = (testSpec.timeout =~ /(\d+)([ms])/)
+      println "timeout matches: " + timeoutMatches[0]
+      return [
+        time: 1 + (timeoutMatches[0][1] as Integer),
+        unit: timeoutMatches[0][2] == 's' ? 'SECONDS' : 'MINUTES',
+      ]
+    }
     def defaultPackageTestSpec = { pkg ->
       def dirPath = pkg.replaceAll('github.com/keybase/client/go/', '')
       def testName = dirPath.replaceAll('/', '_')
@@ -595,8 +603,11 @@ def testGo(prefix, packagesToTest) {
         if (fileExists(testBinary)) {
           def test = {
             dir(testSpec.dirPath) {
-              println "Running tests for ${testSpec.dirPath}"
-              sh "./${testBinary} -test.timeout ${testSpec.timeout}"
+              def timeout = getOverallTimeout(testSpec)
+              timeout(activity: true, time: timeout.time, unit: timeout.unit) {
+                println "Running tests for ${testSpec.dirPath}"
+                sh "./${testBinary} -test.timeout ${testSpec.timeout}"
+              }
             }
           }
           if (testSpec.name in specialTestFilter) {
