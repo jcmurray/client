@@ -578,6 +578,20 @@ func (h *UserHandler) CanLogout(ctx context.Context, sessionID int) (res keybase
 		return res, nil
 	}
 
+	if err := libkb.CheckCurrentUIDDeviceID(libkb.NewMetaContext(ctx, h.G())); err != nil {
+		switch err.(type) {
+		case libkb.DeviceNotFoundError, libkb.UserNotFoundError,
+			libkb.KeyRevokedError, libkb.NoDeviceError, libkb.NoUIDError:
+			h.G().Log.CDebugf(ctx, "CanLogout: allowing logout because of CheckCurrentUIDDeviceID returning: %s", err.Error())
+			return keybase1.CanLogoutRes{CanLogout: true}, nil
+		default:
+			// Unexpected error like network connectivity issue, fall through.
+			// Even if we are offline here, we may be able to get cached value
+			// `false` from LoadHasRandomPw and be allowed to log out.
+			h.G().Log.CDebugf(ctx, "CanLogout: CheckCurrentUIDDeviceID returned: %q, falling through", err.Error())
+		}
+	}
+
 	hasRandomPW, err := h.LoadHasRandomPw(ctx, keybase1.LoadHasRandomPwArg{
 		SessionID:   sessionID,
 		ForceRepoll: false,
