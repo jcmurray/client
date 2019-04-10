@@ -11,7 +11,6 @@ import TabBar from '.'
 import {connect} from '../../util/container'
 import {memoize} from '../../util/memoize'
 import openURL from '../../util/open-url'
-import closeWindow from '../../util/close-window'
 
 type OwnProps = {|
   selectedTab: Tabs.Tab,
@@ -33,7 +32,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(RouteTreeGen.createNavigateAppend({path: [tab]}))
   },
   onHelp: () => openURL('https://keybase.io/docs'),
-  onMinimizeToTray: () => closeWindow(),
   onQuit: () => {
     dispatch(SettingsGen.createStop({exitCode: RPCTypes.ctlExitCode.ok}))
     dispatch(ConfigGen.createDumpLogs({reason: 'quitting through menu'}))
@@ -49,7 +47,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   fullname: stateProps.fullname,
   isWalletsNew: stateProps.isWalletsNew,
   onHelp: dispatchProps.onHelp,
-  onMinimizeToTray: dispatchProps.onMinimizeToTray,
   onProfileClick: () => dispatchProps._onProfileClick(stateProps.username),
   onQuit: dispatchProps.onQuit,
   onSettings: dispatchProps.onSettings,
