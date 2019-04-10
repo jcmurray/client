@@ -31,7 +31,7 @@ func NewCmdCtlStop(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Comma
 			},
 			cli.BoolFlag{
 				Name:  "shutdown",
-				Usage: "tell the service to shutdown, and do nothing else",
+				Usage: "Only shutdown the service",
 			},
 		},
 		Action: func(c *cli.Context) {
@@ -96,9 +96,12 @@ func ctlStop(g *libkb.GlobalContext, components map[string]bool) error {
 }
 
 func (s *CmdCtlStop) Run() error {
-	// For this flag, just stop the service, and don't do anything else.
 	if s.shutdown {
-		return CtlServiceStop(s.G())
+		cli, err := GetCtlClient(g)
+		if err != nil {
+			return err
+		}
+		return cli.StopService(context.TODO(), keybase1.StopArg{ExitCode: keybase1.ExitCode_OK})
 	}
 	return ctlStop(s.G(), s.components)
 }

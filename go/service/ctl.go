@@ -4,6 +4,7 @@
 package service
 
 import (
+	"github.com/keybase/client/go/install"
 	"github.com/keybase/client/go/libkb"
 	"github.com/keybase/client/go/logger"
 	keybase1 "github.com/keybase/client/go/protocol/keybase1"
@@ -27,9 +28,13 @@ func NewCtlHandler(xp rpc.Transporter, v *Service, g *libkb.GlobalContext) *CtlH
 
 // Stop is called on the rpc keybase.1.ctl.stop, which shuts down the service.
 func (c *CtlHandler) Stop(ctx context.Context, args keybase1.StopArg) error {
-	mctx := libkb.NewMetaContext(ctx, c.G())
-	mctx.Debug("Received stop(%d) RPC; shutting down", args.ExitCode)
-	c.service.Stop(mctx, args.ExitCode)
+	install.StopAllButService(libkb.NewMetaContext(ctx, c.G()))
+	c.StopService(ctx, keybase1.StopServiceArg{args.SessionID, args.ExitCode})
+	return nil
+}
+
+func (c *CtlHandler) StopService(ctx context.Context, args keybase1.StopServiceArg) error {
+	c.service.stopCh <- args.ExitCode
 	return nil
 }
 

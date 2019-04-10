@@ -1029,33 +1029,6 @@ func (d *Service) ConfigRPCServer() (net.Listener, error) {
 	return listener, nil
 }
 
-func (d *Service) Stop(mctx libkb.MetaContext, exitCode keybase1.ExitCode) {
-	clients := libkb.GetClientStatus(mctx)
-	for _, client := range clients {
-		if client.Details.ClientType == keybase1.ClientType_CLI {
-			continue
-		}
-
-		// NOTE KBFS catches the SIGTERM and attempts to unmount mountdir before terminating,
-		// 		so we don't have to do it ourselves.
-		// NOTE We kill the GUI by its main electron process ID, which should
-		// 		shut down its child processes.
-		err := d.stopPID(client.Details.Pid)
-		if err != nil {
-			mctx.Debug("Error killing client %+v: %s", client, err)
-		}
-	}
-
-	// NOTE killall only inspects the first 15 characters; we need to use pkill -f
-	err := d.stopProcessInexactMatch("keybase-redirector")
-	if err != nil {
-		mctx.Debug("Error killing keybase-redirector: %s", err)
-	}
-
-	// service
-	d.stopCh <- exitCode
-}
-
 func (d *Service) stopProcessInexactMatch(process string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

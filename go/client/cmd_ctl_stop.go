@@ -1,7 +1,7 @@
 // Copyright 2015 Keybase, Inc. All rights reserved. Use of
 // this source code is governed by the included BSD license.
 
-// +build !darwin,!windows
+// +build !darwin
 
 package client
 
@@ -9,6 +9,8 @@ import (
 	"github.com/keybase/cli"
 	"github.com/keybase/client/go/libcmdline"
 	"github.com/keybase/client/go/libkb"
+	"github.com/keybase/client/go/protocol/keybase1"
+	"golang.org/x/net/context"
 )
 
 func NewCmdCtlStop(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Command {
@@ -18,7 +20,7 @@ func NewCmdCtlStop(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Comma
 		Flags: []cli.Flag{
 			cli.BoolFlag{
 				Name:  "shutdown",
-				Usage: "A no-op flag for linux, since that is the default behavior; the service will just shutdown",
+				Usage: "Only shutdown the service",
 			},
 		},
 		Action: func(c *cli.Context) {
@@ -37,14 +39,24 @@ func newCmdCtlStop(g *libkb.GlobalContext) *CmdCtlStop {
 
 type CmdCtlStop struct {
 	libkb.Contextified
+	shutdown bool
 }
 
 func (s *CmdCtlStop) ParseArgv(ctx *cli.Context) error {
+	s.shutdown = ctx.Bool("shutdown")
 	return nil
 }
 
 func (s *CmdCtlStop) Run() (err error) {
-	return CtlServiceStop(s.G())
+	cli, err := GetCtlClient(s.G())
+	if err != nil {
+		return err
+	}
+	ctx := context.TODO()
+	if s.shutdown {
+		return cli.StopService(ctx, keybase1.StopServiceArg{ExitCode: keybase1.ExitCode_OK})
+	}
+	return cli.Stop(ctx, keybase1.StopArg{ExitCode: keybase1.ExitCode_OK})
 
 }
 
