@@ -1029,22 +1029,6 @@ func (d *Service) ConfigRPCServer() (net.Listener, error) {
 	return listener, nil
 }
 
-func (d *Service) stopProcessInexactMatch(process string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	output, err := exec.CommandContext(ctx, "pkill", "-f", process).CombinedOutput()
-	d.G().Log.Debug("Output (pkill -f %s): %s", process, string(output), err)
-	return err
-}
-
-func (d *Service) stopPID(pid int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	output, err := exec.CommandContext(ctx, "kill", fmt.Sprintf("%d", pid)).CombinedOutput()
-	d.G().Log.Debug("Output (kill %s): %s", pid, string(output), err)
-	return err
-}
-
 func (d *Service) ListenLoopWithStopper(l net.Listener) (exitCode keybase1.ExitCode, err error) {
 	ch := make(chan error)
 	go func() {
