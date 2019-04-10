@@ -4,27 +4,8 @@
 package install
 
 import (
-	"bytes"
-	"context"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strconv"
-	"strings"
-	"syscall"
-	"time"
-
-	"github.com/blang/semver"
-	"github.com/keybase/client/go/install/libnativeinstaller"
-	kbnminstaller "github.com/keybase/client/go/kbnm/installer"
 	"github.com/keybase/client/go/launchd"
 	"github.com/keybase/client/go/libkb"
-	"github.com/keybase/client/go/logger"
-	"github.com/keybase/client/go/mounter"
-	"github.com/keybase/client/go/protocol/keybase1"
 )
 
 func StopAllButService(mctx libkb.MetaContext) {
