@@ -29,7 +29,7 @@ func NewCtlHandler(xp rpc.Transporter, v *Service, g *libkb.GlobalContext) *CtlH
 // Stop is called on the rpc keybase.1.ctl.stop, which shuts down the service.
 func (c *CtlHandler) Stop(ctx context.Context, args keybase1.StopArg) error {
 	install.StopAllButService(libkb.NewMetaContext(ctx, c.G()))
-	c.StopService(ctx, keybase1.StopServiceArg{args.SessionID, args.ExitCode})
+	c.StopService(ctx, keybase1.StopServiceArg{SessionID: args.SessionID, ExitCode: args.ExitCode})
 	return nil
 }
 
