@@ -1,7 +1,6 @@
 package install
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 
@@ -9,18 +8,13 @@ import (
 )
 
 func StopAllButService(mctx libkb.MetaContext) {
-	cli, err := GetKBFSMountClient(mctx.G())
+	mountdir, err := mctx.G().Env.GetMountDir()
 	if err != nil {
-		mctx.Error("KillKBFS: Error in GetKBFSMountClient: %s", err.Error())
-	}
-
-	mountDir, err := cli.GetCurrentMountDir(context.TODO())
-	if err != nil {
-		mctx.Error("KillKBFS: Error in GetCurrentMountDir: %s", err.Error())
+		mctx.Error("StopAllButService: Error in GetCurrentMountDir: %s", err.Error())
 	} else {
 		// open special "file". Errors not relevant.
-		mctx.Debug("KillKBFS: opening .kbfs_unmount")
-		os.Open(filepath.Join(mountDir, "\\.kbfs_unmount"))
-		libkb.ChangeMountIcon(mountDir, "")
+		mctx.Debug("StopAllButService: opening .kbfs_unmount")
+		os.Open(filepath.Join(mountdir, "\\.kbfs_unmount"))
+		libkb.ChangeMountIcon(mountdir, "")
 	}
 }

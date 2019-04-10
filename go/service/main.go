@@ -5,11 +5,9 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
