@@ -2659,3 +2659,17 @@ func NewResetMissingParamsError(msg string) error {
 func (e ResetMissingParamsError) Error() string {
 	return e.msg
 }
+
+//============================================================================
+
+type PushSecretWithoutPasswordError struct {
+	msg string
+}
+
+func NewPushSecretWithoutPasswordError(msg string) error {
+	return PushSecretWithoutPasswordError{msg: msg}
+}
+
+func (e PushSecretWithoutPasswordError) Error() string {
+	return e.msg
+}
