@@ -33,7 +33,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onHelp: () => openURL('https://keybase.io/docs'),
   onQuit: () => {
-    dispatch(SettingsGen.createStop({exitCode: RPCTypes.ctlExitCode.ok}))
+    if (!__DEV__) {
+      dispatch(SettingsGen.createStop({exitCode: RPCTypes.ctlExitCode.ok}))
+    }
     dispatch(ConfigGen.createDumpLogs({reason: 'quitting through menu'}))
   },
   onSettings: () => dispatch(RouteTreeGen.createNavigateAppend({path: [Tabs.settingsTab]})),
